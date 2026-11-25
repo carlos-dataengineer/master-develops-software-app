@@ -17,6 +17,6 @@ jobs:
       - name: Notas da versão
         run: |
           awk -v v="## $(cat VERSION)" 'index($0,v)==1{f=1;next} /^## /{f=0} f' CHANGELOG.md > notes.md
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           body_path: notes.md
