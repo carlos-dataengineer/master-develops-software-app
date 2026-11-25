@@ -152,7 +152,7 @@ p{font-size:22px;line-height:1.45;color:#a3b0c6;margin:0}
 <div class="left"><div class="logo"><svg width="64" height="64" viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" rx="8" fill="#7c8cff"/><path d="M12 11 7 16l5 5M20 11l5 5-5 5M17.5 9l-3 14" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
 <div style="font-size:26px;font-weight:700">Master Develops</div></div>
 <h1>Uma equipe completa para criar <em>softwares e apps</em></h1>
-<p>16 especialistas de IA no Claude Code e no Codex — do produto à revisão independente — com painel de produção em tempo real.</p>
+<p>18 especialistas de IA no Claude Code e no Codex — do produto ao ataque e blindagem de segurança — com painel de produção em tempo real.</p>
 <div class="tags"><span>/masterdev</span><span>$masterdev</span><span>Web · iOS · Android · API</span><span>Dados & IA</span></div></div>
 <div class="right">""" + "".join(cols) + """</div>
 <div class="bar"><b>●</b> Painel ao vivo em 127.0.0.1:47841 · sem telemetria · MIT</div></body>"""

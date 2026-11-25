@@ -1,4 +1,4 @@
-"""Valida a estrutura do pacote: manifestos, skill, 16 agentes (Claude Code e Codex), painel e memória."""
+"""Valida a estrutura do pacote: manifestos, skill, 18 agentes (Claude Code e Codex), painel e memória."""
 from __future__ import annotations
 
 import json
@@ -45,8 +45,8 @@ for phrase in ("Construir um software ou aplicativo do zero", "Evoluir um produt
 
 team = json.loads((SKILL / "assets" / "team.json").read_text(encoding="utf-8"))
 keys = [a["key"] for a in team["agents"]]
-if len(keys) != 16 or len(set(keys)) != 16:
-    errors.append(f"team.json deve ter 16 agentes únicos; tem {len(keys)}")
+if len(keys) != 18 or len(set(keys)) != 18:
+    errors.append(f"team.json deve ter 18 agentes únicos; tem {len(keys)}")
 for key in keys:
     if f"`{key}`" not in content:
         errors.append(f"SKILL.md não apresenta o agente {key}")
@@ -87,4 +87,4 @@ if errors:
     print("FAIL")
     print("\n".join(errors))
     raise SystemExit(1)
-print("PASS: manifestos, skill (4 modos), 16 agentes Claude Code/Codex em dia com team.json, painel e memória contextual válidos.")
+print("PASS: manifestos, skill (4 modos), 18 agentes Claude Code/Codex em dia com team.json, painel e memória contextual válidos.")

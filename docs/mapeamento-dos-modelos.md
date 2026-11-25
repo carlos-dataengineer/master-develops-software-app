@@ -15,7 +15,7 @@ flowchart LR
   subgraph MD[Master Develops]
     S[Skill coordenadora /masterdev]
     PB[Playbooks e definição de pronto]
-    A[16 especialistas em 6 squads]
+    A[18 especialistas em 7 squads]
     R[Revisores independentes]
     B[Painel de produção]
     I[Instalador + memória]
@@ -38,6 +38,7 @@ O Pstack transforma o agente em "uma equipe de engenharia de verdade": uma skill
 | `swarm` / `arena` — paralelizar workers independentes | Regra de delegação: paralelizar só tarefas independentes, um escritor por conjunto de arquivos, dependências com `--after` |
 | `interrogate` / revisão adversarial multi-modelo | Revisores independentes recebem o código e o pedido, não a conclusão do coordenador |
 | `tdd`, `create-verification-skill` | Agente `qa-test-engineer`: teste que reproduz o bug primeiro; gates `testes`/`e2e` |
+| `interrogate` + `blast-radius` levados ao extremo: "tente quebrar" | Squad **Ataque & Blindagem**: `offensive-security-tester` explora como invasor; `security-hardening-engineer` fecha e o reteste prova (v1.1.0) |
 | `blast-radius` — o que a mudança quebra fora do diff | Instruções do `code-correctness-reviewer` e passo 2 do playbook *Evoluir* |
 | `technical-writing`, `unslop` | Agente `technical-writer` (Diátaxis, frases curtas, voz ativa) e regra de resposta final em linguagem simples |
 | `show-me-your-work` — trilha de decisões | Feed do painel, ADRs, relatório da missão em Markdown |
@@ -85,7 +86,7 @@ O Ponytail é uma regra de "desenvolvedor sênior preguiçoso": resolver o probl
 | No Master Data Engineer | No Master Develops |
 |---|---|
 | Skill que pergunta o modo antes de agir | Mantido, com 4 modos em vez de 3 |
-| 8 agentes Databricks | Substituídos por 16 especialistas de produto, design, engenharia, dados, IA, plataforma e revisão |
+| 8 agentes Databricks | Substituídos por 18 especialistas de produto, design, engenharia, dados, IA, plataforma e revisão |
 | Agentes mantidos à mão em dois formatos | **Fonte única** `team.json` + gerador `build_agents.py` |
 | Painel da equipe (4 visões) | **Painel de produção** (6 visões, squads, gates, achados, ADRs, entregáveis, saúde, relatório) — ver `docs/painel.md` |
 | Instalador de um comando | Mantido, com marcador de hook próprio e nome de script próprio para conviver com o MDE |

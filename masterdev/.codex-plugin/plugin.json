@@ -1,7 +1,7 @@
 {
   "name": "masterdev",
-  "version": "1.0.0",
-  "description": "Equipe completa de desenvolvimento de software e aplicativos (16 especialistas): construir, evoluir, revisar e depurar, com painel de produção em tempo real.",
+  "version": "1.1.0",
+  "description": "Equipe completa de desenvolvimento de software e aplicativos (18 especialistas): construir, evoluir, revisar e depurar, com ataque e blindagem de segurança e painel de produção em tempo real.",
   "skills": "./skills/",
   "author": {
     "name": "carlos-dataengineer"

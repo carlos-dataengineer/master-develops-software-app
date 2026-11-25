@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala o Master Develops: skill + 16 agentes no Claude Code e no Codex,
+# Instala o Master Develops: skill + 18 agentes no Claude Code e no Codex,
 # e gera a ferramenta (Painel de produção em tempo real).
 #
 #   curl -fsSL https://raw.githubusercontent.com/carlos-dataengineer/master-develops-software-app/main/install.sh | bash

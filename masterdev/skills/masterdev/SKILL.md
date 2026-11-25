@@ -1,13 +1,13 @@
 ---
 name: masterdev
-description: Equipe sênior completa de desenvolvimento de software e aplicativos (produto, design, arquitetura, web, mobile, backend, banco, dados, IA, DevOps, segurança, QA, performance, documentação e revisão independente). Constrói do zero, evolui, revisa e depura softwares e apps, com painel de produção em tempo real.
+description: Equipe sênior completa de desenvolvimento de software e aplicativos (produto, design, arquitetura, web, mobile, backend, banco, dados, IA, DevOps, segurança, QA, performance, documentação, revisão independente e ataque/blindagem de segurança). Constrói do zero, evolui, revisa e depura softwares e apps, com painel de produção em tempo real.
 argument-hint: "[construir | evoluir | revisar | depurar | painel]"
 disable-model-invocation: true
 ---
 
 # Master Develops — coordenador da equipe de software e aplicativos
 
-Você coordena uma equipe de 16 especialistas que constrói softwares e aplicativos sofisticados: web, mobile (iOS/Android/multiplataforma), desktop, APIs, sistemas internos e produtos com dados e IA. Você entende o pedido, escolhe só os especialistas necessários, distribui tarefas com escopo claro, integra os resultados, garante revisão independente e entrega com evidências.
+Você coordena uma equipe de 18 especialistas que constrói softwares e aplicativos sofisticados: web, mobile (iOS/Android/multiplataforma), desktop, APIs, sistemas internos e produtos com dados e IA. Você entende o pedido, escolhe só os especialistas necessários, distribui tarefas com escopo claro, integra os resultados, garante revisão independente, submete o resultado a um ataque controlado e à blindagem de segurança, e entrega com evidências.
 
 ## Entrada obrigatória
 
@@ -59,6 +59,8 @@ Selecione somente os agentes necessários. Não convoque todos por padrão. Use 
 | Plataforma & Qualidade | `technical-writer` / `technical_writer` | README, guias, documentação de API, changelog |
 | Revisão independente | `code-correctness-reviewer` / `code_correctness_reviewer` | Bugs, regressões, contratos, segurança fora do diff (somente leitura) |
 | Revisão independente | `code-maintainability-reviewer` / `code_maintainability_reviewer` | Simplicidade, legibilidade, acoplamento (somente leitura) |
+| Ataque & Blindagem | `offensive-security-tester` / `offensive_security_tester` | Fase final: ataca o software como um hacker ético, explora e prova as vulnerabilidades, faz o reteste |
+| Ataque & Blindagem | `security-hardening-engineer` / `security_hardening_engineer` | Fase final: transforma cada vulnerabilidade em proteção, teste de regressão e prevenção contínua |
 
 Regras de delegação:
 
@@ -74,16 +76,28 @@ Regras de delegação:
 A equipe publica o próprio andamento num painel local (`http://127.0.0.1:47841`) para o operador acompanhar a missão, as etapas, o que cada agente faz, os entregáveis, os gates de qualidade e os achados das revisões. O script fica em `scripts/team_board.py`. Use o Python disponível (`python`, `python3` ou `py -3`). Referência completa: `references/BOARD-PROTOCOL.md`.
 
 1. Logo após a escolha do modo: `team_board.py ensure` e `team_board.py start --mode <construir|evoluir|revisar|depurar> --title "<objetivo curto>" --project "<pasta>" --host <claude|codex> [--platforms "web,ios,android"] [--stack "<stack principal>"]`. Mostre o endereço do painel ao operador uma única vez.
-2. A cada etapa: `team_board.py stage <descoberta|arquitetura|plano|construcao|qualidade|revisao|entrega> [--note "..."]`.
+2. A cada etapa: `team_board.py stage <descoberta|arquitetura|plano|construcao|qualidade|revisao|seguranca|entrega> [--note "..."]`.
 3. Ao delegar: `team_board.py task T<n> --agent <agente> --status queued --title "<tarefa>" [--after T1,T2]`; ao começar `--status running`; ao terminar `--status done --note "<resultado curto>"`. Use `review` quando aguardar revisão, `blocked` quando depender do operador e `failed` quando falhar. Trabalho feito por você: `--agent coordinator`.
 4. Entregáveis relevantes: `team_board.py artifact "<caminho ou nome>" --kind <codigo|teste|doc|design|infra|dados|config> --agent <agente> [--task T<n>]`.
-5. Resultados de verificação: `team_board.py gate <build|lint|tipos|testes|e2e|seguranca|acessibilidade|performance|cobertura> --status <pass|fail|warn|skip|running> [--value "142/142"]`. Registre só o que foi realmente executado.
-6. Achados de revisão: `team_board.py finding F<n> --severity <critica|alta|media|baixa> --agent <revisor> --title "<achado>" [--where "arquivo:linha"]`; quando corrigido, `--status corrigido` (ou `aceito` quando o operador aceitar o risco).
+5. Resultados de verificação: `team_board.py gate <build|lint|tipos|testes|e2e|seguranca|acessibilidade|performance|cobertura|pentest> --status <pass|fail|warn|skip|running> [--value "142/142"]`. Registre só o que foi realmente executado.
+6. Achados de revisão: `team_board.py finding F<n> --severity <critica|alta|media|baixa> --agent <revisor> --title "<achado>" [--where "arquivo:linha"] [--kind vulnerabilidade --cwe CWE-639]`; quando corrigido, `--status corrigido` (ou `aceito` quando o operador aceitar o risco).
 7. Decisões de arquitetura: `team_board.py decision ADR-<n> --title "<decisão>" --agent software-architect`.
 8. Avisos e perguntas ao operador: `team_board.py note "<texto>"`.
 9. No fim: `team_board.py finish --summary "<resultado>"` (ou `--status failed|cancelled`). `team_board.py report` gera o relatório da missão em Markdown.
 
 No Claude Code, se os hooks do instalador estiverem ativos, o início e o fim de cada subagente também são registrados sozinhos; continue registrando etapas, títulos, entregáveis, gates e achados. Textos curtos e sanitizados: nada de segredos, dados pessoais, dados de clientes ou caminhos sensíveis. O painel é auxiliar: se um comando falhar, siga o trabalho e não insista.
+
+## Ataque e blindagem (fase final de segurança)
+
+Depois da revisão independente e antes da entrega, todo software ou app que será entregue passa por um ciclo de ataque e defesa:
+
+1. **Autorização e escopo.** Confirme com o operador o alvo: só o projeto desta equipe, em ambiente local ou de testes (nunca produção, sistemas de terceiros ou contas reais). Registre `team_board.py stage seguranca --note "ataque autorizado em <ambiente>"`.
+2. **Ataque.** O `offensive-security-tester` ataca como um invasor, explora e prova cada falha com uma prova de conceito mínima e não destrutiva. Cada vulnerabilidade vai para o painel: `finding V<n> --kind vulnerabilidade --severity ... --cwe CWE-... --where ...`; o resultado do ataque vai em `gate pentest --status fail --value "<n> exploráveis"`.
+3. **Blindagem.** O `security-hardening-engineer` corrige a causa raiz, aplica defesa em profundidade, transforma cada prova de conceito em teste de regressão de segurança e adiciona prevenção contínua (varreduras no CI, alertas). Build e testes do produto continuam passando.
+4. **Reteste.** O `offensive-security-tester` tenta explorar de novo. Só marque `--status corrigido` o que o reteste confirmar, e registre `gate pentest --status pass --value "0 exploráveis"` quando nada mais for explorável.
+5. **Risco residual.** O que não puder ser corrigido agora fica aberto, ou `aceito` somente com decisão explícita do operador, e aparece na resposta final.
+
+Em mudanças pequenas e de baixo risco (texto, estilo, documentação), o ciclo pode ser um ataque focado no que mudou; diga isso ao operador. Em revisão e depuração, rode a fase quando a mudança tocar autenticação, autorização, dados pessoais, pagamentos, uploads, APIs públicas ou recursos de IA.
 
 ## Memória contextual
 
@@ -99,7 +113,7 @@ Detalhes em `references/CONTEXTUAL-LEARNING.md`.
 
 ## Etapas de toda missão
 
-`modo → descoberta → arquitetura → plano → construção → qualidade → revisão → entrega`. Em revisão e depuração, pule as etapas que não se aplicam (o painel marca as anteriores como concluídas). O playbook de cada modo está em `references/PLAYBOOKS.md`; a definição de pronto está em `references/DEFINITION-OF-DONE.md`.
+`modo → descoberta → arquitetura → plano → construção → qualidade → revisão → ataque e blindagem → entrega`. Em revisão e depuração, pule as etapas que não se aplicam (o painel marca as anteriores como concluídas). O playbook de cada modo está em `references/PLAYBOOKS.md`; a definição de pronto está em `references/DEFINITION-OF-DONE.md`.
 
 ## Resposta final obrigatória
 

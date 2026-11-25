@@ -1,20 +1,20 @@
 <div align="center">
-  <img src="assets/cover.png" alt="Master Develops: 16 especialistas de IA organizados em 6 squads" width="100%" />
+  <img src="assets/cover.png" alt="Master Develops: 18 especialistas de IA organizados em 7 squads" width="100%" />
 </div>
 
 <h1 align="center">Master Develops</h1>
 
 <p align="center">
   <strong>Uma equipe completa de IA para criar softwares e aplicativos sofisticados — dentro do Claude Code e do Codex.</strong><br/>
-  Produto, design, arquitetura, web, mobile, backend, banco de dados, engenharia e ciência de dados, DevOps, segurança, QA, performance, documentação e revisão independente — com um painel de produção em tempo real.
+  Produto, design, arquitetura, web, mobile, backend, banco de dados, engenharia e ciência de dados, DevOps, segurança, QA, performance, documentação, revisão independente e um time de ataque e blindagem que tenta invadir o que foi construído antes da entrega — com um painel de produção em tempo real.
 </p>
 
 <p align="center">
   <a href="https://github.com/carlos-dataengineer/master-develops-software-app/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/carlos-dataengineer/master-develops-software-app/actions/workflows/ci.yml/badge.svg" /></a>
-  <img alt="Versão" src="https://img.shields.io/badge/versão-1.0.0-7c8cff" />
+  <img alt="Versão" src="https://img.shields.io/badge/versão-1.1.0-7c8cff" />
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-/masterdev-D97757" />
   <img alt="Codex" src="https://img.shields.io/badge/Codex-$masterdev-111111" />
-  <img alt="Especialistas" src="https://img.shields.io/badge/especialistas-16-38bdf8" />
+  <img alt="Especialistas" src="https://img.shields.io/badge/especialistas-18-38bdf8" />
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB" />
   <img alt="Licença" src="https://img.shields.io/badge/licença-MIT-green" />
 </p>
@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/carlos-dataengineer/master-develops
 
 Um comando e pronto:
 
-1. a skill **`masterdev`** e os **16 especialistas** são instalados no **Claude Code** e no **Codex**;
+1. a skill **`masterdev`** e os **18 especialistas** são instalados no **Claude Code** e no **Codex**;
 2. o **Painel de produção** é gerado na sua máquina e **abre no navegador**;
 3. no Claude Code, hooks passam a registrar sozinhos cada especialista que começa ou termina uma tarefa.
 
@@ -64,7 +64,8 @@ Serve para **sites e apps web, aplicativos iOS e Android, APIs e serviços, sist
 | | |
 |---|---|
 | 🧑‍✈️ **Um ponto de entrada** | `/masterdev` pergunta o modo (construir, evoluir, revisar, depurar) e conduz o resto |
-| 👥 **16 especialistas em 6 squads** | Produto & Design, Arquitetura, Engenharia, Dados & IA, Plataforma & Qualidade e Revisão independente |
+| 👥 **18 especialistas em 7 squads** | Produto & Design, Arquitetura, Engenharia, Dados & IA, Plataforma & Qualidade, Revisão independente e Ataque & Blindagem |
+| 🛡️ **Atacado antes de ser entregue** | Um hacker ético da equipe tenta invadir o software; outro especialista transforma cada falha em proteção e o ataque confirma que fechou |
 | 📺 **Painel de produção** | Etapas, tarefas e dependências, entregáveis, gates de qualidade, achados, ADRs e índice de saúde — ao vivo |
 | ✅ **Prova, não promessa** | Só conta como aprovado o que foi executado de verdade; revisores independentes em modo somente leitura |
 | 🧠 **Memória contextual** | Lembra convenções e decisões confirmadas, isoladas por projeto |
@@ -82,9 +83,9 @@ Serve para **sites e apps web, aplicativos iOS e Android, APIs e serviços, sist
 | Onde | O quê |
 |---|---|
 | `~/.claude/skills/masterdev/` | Skill coordenadora para o Claude Code (playbooks, definição de pronto, painel e memória) |
-| `~/.claude/agents/*.md` | Os 16 especialistas no formato do Claude Code |
+| `~/.claude/agents/*.md` | Os 18 especialistas no formato do Claude Code |
 | `~/.agents/skills/masterdev/` | Skill para o Codex (com `agents/openai.yaml` para o menu `/skills`) |
-| `~/.codex/agents/*.toml` | Os 16 especialistas no formato do Codex |
+| `~/.codex/agents/*.toml` | Os 18 especialistas no formato do Codex |
 | `~/.claude/settings.json` | 2 hooks (`PreToolUse`/`PostToolUse` da ferramenta de subagentes), com cópia em `settings.json.bak-mdv` |
 | `~/MasterDevelops/painel.html` | O painel em um arquivo único (foto da última missão + demonstração) |
 | `~/MasterDevelops/Abrir painel.cmd` · `abrir-painel.sh` | Atalho para reabrir o painel ao vivo |
@@ -139,7 +140,7 @@ Toda ativação começa com a mesma pergunta — a equipe **não mexe em arquivo
 
 | Modo | Quando usar | O que a equipe faz |
 |---|---|---|
-| **1. Construir** | Software ou app novo | Descoberta → arquitetura → plano → construção em paralelo → qualidade → revisão → entrega |
+| **1. Construir** | Software ou app novo | Descoberta → arquitetura → plano → construção em paralelo → qualidade → revisão → ataque e blindagem → entrega |
 | **2. Evoluir** | Nova funcionalidade, melhoria ou refatoração | Lê convenções, mapeia o impacto, remove o obsoleto, constrói, testa e revisa |
 | **3. Revisar** | Código, PR, app, arquitetura, segurança | Revisões independentes em paralelo; achados com severidade, arquivo:linha e cenário |
 | **4. Depurar** | Bug ou falha | Reproduz, encontra a causa raiz, corrige com a menor mudança e cria teste de regressão |
@@ -160,6 +161,7 @@ Exemplos de pedidos em [`docs/casos-de-uso.md`](docs/casos-de-uso.md).
 | 📊 **Dados & IA** | `data-engineer` (estrutura e fluxo dos dados do app, eventos, pipelines) · `data-scientist` (métricas, experimentos, ML e LLM) |
 | 🚦 **Plataforma & Qualidade** | `devops-sre-engineer` · `security-engineer` · `qa-test-engineer` · `performance-engineer` · `technical-writer` |
 | 🔍 **Revisão independente** | `code-correctness-reviewer` · `code-maintainability-reviewer` (somente leitura) |
+| 🛡️ **Ataque & Blindagem** | `offensive-security-tester` (ataca como hacker ético e prova as falhas) · `security-hardening-engineer` (cria as proteções) |
 
 No Codex os nomes usam sublinhado (`backend_engineer`). Papel e instruções de cada um em [`docs/agents.md`](docs/agents.md). Toda a equipe vem de um único arquivo, [`team.json`](masterdev/skills/masterdev/assets/team.json).
 
@@ -171,10 +173,10 @@ Roda só na sua máquina, em `http://127.0.0.1:47841`, e se atualiza sozinho enq
 
 | Tecla | Visão | |
 |---|---|---|
-| `1` | **Visão geral** | Missão, progresso, índice de saúde, 8 etapas, "Precisa de atenção", equipe por squad, atividade ao vivo |
+| `1` | **Visão geral** | Missão, progresso, índice de saúde, 9 etapas, "Precisa de atenção", equipe por squad, atividade ao vivo |
 | `2` | **Tarefas** | Quadro com dependências entre tarefas e filtro por squad |
 | `3` | **Linha do tempo** | Faixa de etapas + uma linha por especialista |
-| `4` | **Qualidade** | Gates (build, lint, tipos, testes, E2E, cobertura, segurança, acessibilidade, performance) e achados de revisão |
+| `4` | **Qualidade** | Gates (build, lint, tipos, testes, E2E, cobertura, segurança, acessibilidade, performance, pentest), achados de revisão e vulnerabilidades com CWE |
 | `5` | **Entregáveis** | Arquivos produzidos por tipo e decisões de arquitetura (ADRs) |
 | `6` | **Histórico** | Métricas de produção, missões por modo, especialistas mais acionados |
 
@@ -203,7 +205,9 @@ flowchart LR
   E --> F[Construção em paralelo<br/>Web · Mobile · Backend · Dados · DevOps]
   F --> G[Qualidade<br/>QA · Performance · Segurança]
   G --> H[Revisão independente<br/>Corretude ∥ Manutenibilidade]
-  H --> I[Entrega<br/>docs + evidências]
+  H --> S[Ataque e blindagem<br/>Hacker ético → Blindagem → Reteste]
+  S --> I[Entrega<br/>docs + evidências]
+  S -. vulnerabilidades .-> P
   F -. eventos .-> P[(Painel)]
   G -. gates .-> P
   H -. achados .-> P
@@ -218,6 +222,7 @@ Princípios que guiam todos os especialistas:
 - **Um escritor por arquivo**, paralelismo só no que é independente.
 - **Prove que funciona**: build, testes e app rodando; nunca declarar sucesso sem evidência.
 - **Causa raiz** em bugs, **revisão independente** em toda entrega.
+- **Atacar antes de entregar**: ataque controlado no ambiente local ou de testes, blindagem na causa raiz e reteste — nunca contra produção ou sistemas de terceiros.
 
 Detalhes: [arquitetura](docs/architecture.md) · [playbooks](masterdev/skills/masterdev/references/PLAYBOOKS.md) · [definição de pronto](masterdev/skills/masterdev/references/DEFINITION-OF-DONE.md) · [protocolo do painel](masterdev/skills/masterdev/references/BOARD-PROTOCOL.md) · [memória contextual](docs/contextual-learning.md).
 
@@ -245,8 +250,8 @@ master-develops-software-app/
 │   │   ├── references/                playbooks, definição de pronto, protocolo do painel, memória
 │   │   ├── scripts/                   team_board.py (painel) · contextual_memory.py (memória)
 │   │   └── assets/                    painel.html · team.json (fonte única da equipe)
-│   ├── agents/                        16 agentes Claude Code (gerados)
-│   ├── .codex/agents/                 16 agentes Codex (gerados)
+│   ├── agents/                        18 agentes Claude Code (gerados)
+│   ├── .codex/agents/                 18 agentes Codex (gerados)
 │   └── tests/                         validação do pacote, painel e memória
 ├── scripts/                           install.py · build_agents.py · screenshots.py
 ├── tests/                             testes do instalador
@@ -255,8 +260,12 @@ master-develops-software-app/
 
 ## ❓ Perguntas frequentes
 
-<details><summary><b>Preciso usar os 16 especialistas sempre?</b></summary>
+<details><summary><b>Preciso usar os 18 especialistas sempre?</b></summary>
 Não. O coordenador escolhe só os necessários; um bug simples pode envolver dois ou três. A tabela "Escolhendo especialistas por tipo de produto" nos playbooks sugere o núcleo de cada tipo de projeto.
+</details>
+
+<details><summary><b>O "hacker" da equipe pode atacar qualquer sistema?</b></summary>
+Não. O `offensive-security-tester` ataca somente o software que a própria equipe está construindo, no código do projeto e em ambiente local ou de testes autorizado pelo operador. Não ataca produção, sistemas de terceiros nem contas reais, não faz negação de serviço e usa só dados fictícios nas provas de conceito. Quem corrige é o `security-hardening-engineer`; o ataque depois confirma que a falha fechou.
 </details>
 
 <details><summary><b>A equipe faz deploy ou publica nas lojas sozinha?</b></summary>

@@ -48,8 +48,8 @@ class InstallTests(unittest.TestCase):
                     "MasterDevelops/app/assets/team.json", "MasterDevelops/Abrir painel.cmd",
                     "MasterDevelops/abrir-painel.sh"):
             self.assertTrue((self.home / rel).exists(), rel)
-        self.assertEqual(len(list((self.home / ".claude" / "agents").glob("*.md"))), 16)
-        self.assertEqual(len(list((self.home / ".codex" / "agents").glob("*.toml"))), 16)
+        self.assertEqual(len(list((self.home / ".claude" / "agents").glob("*.md"))), 18)
+        self.assertEqual(len(list((self.home / ".codex" / "agents").glob("*.toml"))), 18)
         s = self.settings()
         self.assertEqual(s["model"], "x")
         self.assertEqual(len(s["hooks"]["PreToolUse"]), 3)  # o do usuário, o do Master Data Engineer e o nosso

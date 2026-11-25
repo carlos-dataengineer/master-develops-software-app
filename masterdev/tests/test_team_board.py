@@ -49,7 +49,7 @@ class BoardCase(unittest.TestCase):
 class TeamTests(unittest.TestCase):
     def test_team_has_16_specialists_in_squads(self):
         agents = [a for a in tb.AGENTS if a["key"] != "coordinator"]
-        self.assertEqual(len(agents), 16)
+        self.assertEqual(len(agents), 18)
         squads = {s["key"] for s in tb.SQUADS}
         self.assertTrue(all(a["squad"] in squads for a in agents))
         self.assertEqual(len({a["short"] for a in tb.AGENTS}), len(tb.AGENTS), "siglas repetidas")
@@ -115,6 +115,32 @@ class MissionFlowTests(BoardCase):
         self.assertEqual(run["status"], "done")
         self.assertEqual(run["progress"], 1.0)
         self.assertTrue(all(s["status"] in ("done", "skipped") for s in run["stages"]))
+
+    def test_attack_and_hardening_phase(self):
+        self.cli("start", "--mode", "construir", "--title", "Loja")
+        self.cli("stage", "revisao")
+        self.cli("stage", "ataque")  # apelido da etapa de ataque e blindagem
+        self.cli("task", "T1", "--agent", "offensive_security_tester", "--status", "running", "--title", "Atacar a API")
+        self.cli("finding", "V1", "--severity", "critica", "--agent", "offensive-security-tester", "--cwe", "639",
+                 "--title", "IDOR em pedidos", "--where", "src/api/pedidos.ts:9")
+        self.cli("finding", "F1", "--severity", "baixa", "--agent", "code-maintainability-reviewer", "--title", "Nome vago")
+        self.cli("finding", "V2", "--severity", "media", "--kind", "cwe", "--title", "x", expected=2)
+        self.cli("finding", "V2", "--severity", "media", "--cwe", "abc", "--title", "x", expected=2)
+        self.cli("gate", "ataque", "--status", "fail", "--value", "1 explorável")
+        run = tb.build_state()["run"]
+        self.assertEqual(run["current_stage"], "seguranca")
+        v1 = next(f for f in run["findings"] if f["id"] == "V1")
+        self.assertEqual((v1["kind"], v1["cwe"]), ("vulnerabilidade", "CWE-639"))
+        self.assertEqual(next(f for f in run["findings"] if f["id"] == "F1")["kind"], "qualidade")
+        self.assertEqual(run["finding_counts"]["vulns_open"], 1)
+        self.assertTrue(any(a["text"].startswith("Vulnerabilidade") for a in run["attention"]))
+        self.assertEqual(run["gates"][0]["key"], "pentest")
+        self.cli("finding", "V1", "--status", "corrigido", "--agent", "security-hardening-engineer")
+        self.cli("gate", "pentest", "--status", "pass", "--value", "0 exploráveis")
+        run = tb.build_state()["run"]
+        self.assertEqual(run["finding_counts"]["vulns_open"], 0)
+        self.assertEqual(run["health"]["score"], 99)
+        self.assertIn("CWE-639", tb.report_markdown(tb.build_state()))
 
     def test_report_markdown(self):
         self.cli("start", "--mode", "evoluir", "--title", "Exportar CSV")
@@ -214,7 +240,7 @@ class ServerAndExportTests(BoardCase):
             with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/state") as r:
                 state = json.load(r)
                 self.assertEqual(state["run"]["title"], "API")
-                self.assertEqual(len(state["agents_meta"]), 17)
+                self.assertEqual(len(state["agents_meta"]), 19)
             with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/report.md") as r:
                 self.assertIn("# API", r.read().decode("utf-8"))
                 self.assertIn("attachment", r.headers.get("Content-Disposition"))
@@ -246,9 +272,12 @@ class ServerAndExportTests(BoardCase):
         self.assertLess(frames[0]["run"]["progress"], frames[-1]["run"]["progress"])
         last = frames[-1]["run"]
         self.assertEqual(last["status"], "done")
-        self.assertEqual(last["involved"], 16)
+        self.assertEqual(last["involved"], 18)
         self.assertGreaterEqual(len(last["artifacts"]), 8)
-        self.assertEqual(last["finding_counts"]["fixed"], 2)
+        self.assertEqual(last["finding_counts"]["fixed"], 5)
+        self.assertEqual(last["finding_counts"]["vulns"], 3)
+        self.assertEqual(last["finding_counts"]["vulns_open"], 0)
+        self.assertEqual(next(g for g in last["gates"] if g["key"] == "pentest")["status"], "pass")
 
 
 if __name__ == "__main__":

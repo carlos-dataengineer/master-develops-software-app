@@ -44,6 +44,16 @@ O `data-scientist` define métrica de sucesso, linha de base, conjunto de avalia
 
 O `data-engineer` produz o dicionário de dados, a linhagem e a classificação de sensibilidade; o `database-engineer` aponta índices e riscos de consulta.
 
-## 7. Acompanhar no telão do time
+## 7. Atacar e blindar antes de entregar
+
+Ao fim de toda construção, depois da revisão, a equipe faz um ciclo de segurança ofensiva e defensiva no ambiente local ou de testes autorizado:
+
+- O `offensive-security-tester` age como invasor: descobre, por exemplo, que um paciente consegue ver consultas de outro trocando o id na URL (IDOR, CWE-639), que o login aceita tentativas infinitas e que o app guarda o token sem criptografia. Cada falha vem com prova de conceito, impacto e passos para reproduzir.
+- O `security-hardening-engineer` corrige na causa raiz (autorização por dono do recurso, limite de tentativas, armazenamento seguro do celular), transforma cada prova de conceito em teste automatizado e liga varreduras de segurança no CI.
+- O ataque é repetido (reteste); só quando nada mais é explorável o gate `pentest` fica aprovado.
+
+É a fase "Ataque e blindagem" da demonstração do painel.
+
+## 8. Acompanhar no telão do time
 
 Abra o painel, tecle **F** (modo TV) e **N** (avisos). Bloqueios, gates reprovados e achados graves aparecem na faixa "Precisa de atenção" e como aviso do navegador.

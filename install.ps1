@@ -1,4 +1,4 @@
-# Instala o Master Develops no Windows: skill + 16 agentes no Claude Code e no Codex,
+# Instala o Master Develops no Windows: skill + 18 agentes no Claude Code e no Codex,
 # e gera a ferramenta (Painel de producao em tempo real).
 #
 #   irm https://raw.githubusercontent.com/carlos-dataengineer/master-develops-software-app/main/install.ps1 | iex

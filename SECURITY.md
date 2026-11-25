@@ -4,6 +4,7 @@
 
 | Versão | Suporte |
 |---|---|
+| 1.1.x | ✅ |
 | 1.0.x | ✅ |
 
 ## Como relatar uma vulnerabilidade
@@ -17,4 +18,5 @@
 - **Eventos do painel:** ficam em `~/MasterDevelops/board/events.jsonl`, só com textos curtos. Textos que parecem credenciais (chaves de API, tokens, senhas, connection strings) são substituídos por um aviso antes de serem gravados. Caminhos absolutos são reduzidos às três últimas partes.
 - **Memória contextual:** SQLite local, fora do repositório, sem criptografia automática. Não guarde segredos nem dados pessoais.
 - **Sem telemetria:** nenhum script faz chamadas de rede, exceto o instalador ao baixar este repositório do GitHub.
+- **Agente ofensivo:** o `offensive-security-tester` só ataca o software que a equipe está construindo, em ambiente local ou de testes autorizado pelo operador; nunca produção, sistemas de terceiros ou contas reais, sem negação de serviço e com dados fictícios nas provas de conceito.
 - **Ações com impacto:** a equipe não faz deploy, não publica em lojas, não roda migrations em ambientes compartilhados, não apaga dados e não muda permissões ou infraestrutura sem autorização explícita do operador. Os revisores independentes atuam em modo somente leitura.

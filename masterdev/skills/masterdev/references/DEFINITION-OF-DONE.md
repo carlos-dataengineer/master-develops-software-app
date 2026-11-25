@@ -38,6 +38,12 @@ Use como checklist antes da etapa de entrega. Marque só o que foi verificado de
 - [ ] Revisão independente de corretude feita; achados críticos e altos corrigidos.
 - [ ] Revisão de manutenibilidade feita.
 
+## Ataque e blindagem
+- [ ] Ataque controlado feito no alvo autorizado (local ou de testes), com prova de conceito de cada vulnerabilidade.
+- [ ] Vulnerabilidades críticas e altas corrigidas na causa raiz, com teste de regressão de segurança.
+- [ ] Reteste confirmou que as falhas corrigidas não são mais exploráveis (gate `pentest` aprovado).
+- [ ] Riscos residuais aceitos explicitamente pelo operador e listados na resposta final.
+
 ## Entrega
 - [ ] README/guia atualizado com como instalar, rodar e configurar.
 - [ ] CHANGELOG atualizado quando houver versão.

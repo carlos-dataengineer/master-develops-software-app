@@ -1,4 +1,4 @@
-# Os 16 especialistas
+# Os 18 especialistas
 
 A equipe é definida em um único arquivo, [`team.json`](../masterdev/skills/masterdev/assets/team.json). Dele saem os agentes do Claude Code (`masterdev/agents/*.md`) e do Codex (`masterdev/.codex/agents/*.toml`), e o painel lê nomes, siglas, cores e squads do mesmo lugar.
 
@@ -22,6 +22,8 @@ O **coordenador** (a skill `masterdev`) não é um agente separado: é quem conv
 | Plataforma & Qualidade | `technical-writer` | `technical_writer` | TW | README, documentação, guias e changelog |
 | Revisão independente | `code-correctness-reviewer` | `code_correctness_reviewer` | CR | Revisão independente de corretude e regressões (somente leitura) |
 | Revisão independente | `code-maintainability-reviewer` | `code_maintainability_reviewer` | MR | Simplicidade, legibilidade e manutenção (somente leitura) |
+| Ataque & Blindagem | `offensive-security-tester` | `offensive_security_tester` | RT | Ataca o software como um hacker (red team) e prova as falhas |
+| Ataque & Blindagem | `security-hardening-engineer` | `security_hardening_engineer` | BT | Transforma as falhas em proteções (blue team) e prova que fecharam |
 
 ## O que cada um faz
 
@@ -69,17 +71,30 @@ O **coordenador** (a skill `masterdev`) não é um agente separado: é quem conv
 
 **Maintainability Reviewer** (`code-maintainability-reviewer`) — Revisor independente de manutenibilidade. Avalia simplicidade, legibilidade, coesão, acoplamento, duplicação, abstrações desnecessárias, testes frágeis e aderência às convenções do projeto.
 
+### Ataque & Blindagem
+
+**Offensive Security Tester** (`offensive-security-tester`) — Testador de segurança ofensiva (red team / hacker ético). Na fase final, ataca o software ou app criado pela equipe como um invasor faria, explora as vulnerabilidades em ambiente local ou de testes e entrega cada falha com prova de conceito, impacto e passos de reprodução.
+
+**Security Hardening Engineer** (`security-hardening-engineer`) — Engenheiro de blindagem (blue team). Recebe as vulnerabilidades encontradas pelo ataque e cria os mecanismos de proteção do software ou app: correção da causa raiz, defesa em profundidade, testes de regressão de segurança, monitoramento e prevenção para que a falha não volte.
+
+## Ataque e blindagem: como os dois trabalham juntos
+
+1. O coordenador confirma com você o alvo autorizado: só o projeto da equipe, em ambiente local ou de testes.
+2. O `offensive-security-tester` faz o reconhecimento, modela as ameaças e explora o software como um invasor, entregando cada vulnerabilidade com severidade, CWE, local, passos de reprodução, prova de conceito e impacto. Ele não corrige o código do produto.
+3. O `security-hardening-engineer` corrige cada falha na causa raiz, aplica defesa em profundidade, transforma a prova de conceito em teste de regressão e adiciona prevenção contínua no CI.
+4. O `offensive-security-tester` refaz o ataque. Só o que o reteste confirmar vira "corrigido" no painel; o gate `pentest` só passa quando nada mais é explorável.
+
 ## Regras comuns a todos
 
 trabalhe só no escopo e nos arquivos que o coordenador atribuiu; não invente requisitos, APIs, dados ou resultados; separe fatos, hipóteses e o que foi realmente executado; nunca exponha segredos, tokens ou dados pessoais reais; operações destrutivas, deploy, publicação, migrations em ambientes compartilhados e alterações de permissões exigem autorização explícita do operador. Ao terminar, responda com: resultado, arquivos tocados, validações executadas (com o resultado real), pendências e riscos.
 
 ## Como a equipe trabalha junta
 
-- **Só quem é necessário.** O coordenador não convoca os 16 por padrão; a tabela de *Escolhendo especialistas por tipo de produto* em [`PLAYBOOKS.md`](../masterdev/skills/masterdev/references/PLAYBOOKS.md) sugere o núcleo de cada tipo de projeto.
+- **Só quem é necessário.** O coordenador não convoca os 18 por padrão; a tabela *Escolhendo especialistas por tipo de produto* em [`PLAYBOOKS.md`](../masterdev/skills/masterdev/references/PLAYBOOKS.md) sugere o núcleo de cada tipo de projeto.
 - **Um escritor por arquivo.** Antes de paralelizar, o coordenador separa os arquivos de cada agente.
-- **Dependências explícitas.** O frontend espera o contrato da API; o backend espera o esquema do banco. No painel isso aparece como `depende de T4`.
+- **Dependências explícitas.** O frontend espera o contrato da API; a blindagem espera o ataque. No painel isso aparece como `depende de T4`.
 - **Revisão independente.** Os dois revisores só leem e recebem o código e o pedido original, nunca a conclusão de quem escreveu.
-- **Autorização explícita** para deploy, publicação em lojas, migrations em ambientes compartilhados, operações destrutivas e mudanças de permissão ou infraestrutura.
+- **Autorização explícita** para deploy, publicação em lojas, migrations em ambientes compartilhados, operações destrutivas, mudanças de permissão ou infraestrutura e para definir o alvo do ataque.
 
 ## Mudando ou adicionando um agente
 

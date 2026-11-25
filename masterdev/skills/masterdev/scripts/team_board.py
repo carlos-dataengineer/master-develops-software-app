@@ -78,6 +78,7 @@ STAGES: list[tuple[str, str]] = [
     ("construcao", "Construção"),
     ("qualidade", "Testes e qualidade"),
     ("revisao", "Revisão independente"),
+    ("seguranca", "Ataque e blindagem"),
     ("entrega", "Entrega"),
 ]
 STAGE_KEYS = [k for k, _ in STAGES]
@@ -91,6 +92,8 @@ STAGE_ALIASES = {
     "testes": "qualidade", "qa": "qualidade", "quality": "qualidade", "validacao": "qualidade", "validação": "qualidade",
     "review": "revisao", "revisão": "revisao", "consolidacao": "entrega", "consolidação": "entrega",
     "delivery": "entrega", "deploy": "entrega",
+    "segurança": "seguranca", "security": "seguranca", "ataque": "seguranca", "pentest": "seguranca",
+    "blindagem": "seguranca", "hardening": "seguranca", "red-team": "seguranca", "blue-team": "seguranca",
 }
 # Hooks: quando um subagente começa, a etapa avança sozinha (nunca volta) conforme o papel.
 STAGE_HINT = {
@@ -98,6 +101,7 @@ STAGE_HINT = {
     "database-engineer": "construcao", "devops-sre-engineer": "construcao",
     "qa-test-engineer": "qualidade", "performance-engineer": "qualidade",
     "code-correctness-reviewer": "revisao", "code-maintainability-reviewer": "revisao",
+    "offensive-security-tester": "seguranca", "security-hardening-engineer": "seguranca",
 }
 MODES = {"construir": "Construção", "evoluir": "Evolução", "revisar": "Revisão", "depurar": "Debugging",
          "livre": "Sessão livre"}
@@ -117,12 +121,13 @@ KIND_ALIASES = {"code": "codigo", "código": "codigo", "test": "teste", "testes"
 GATES: list[tuple[str, str]] = [
     ("build", "Build"), ("lint", "Lint"), ("tipos", "Tipos"), ("testes", "Testes"), ("e2e", "Ponta a ponta"),
     ("cobertura", "Cobertura"), ("seguranca", "Segurança"), ("acessibilidade", "Acessibilidade"),
-    ("performance", "Performance"),
+    ("performance", "Performance"), ("pentest", "Ataque (pentest)"),
 ]
 GATE_LABEL = dict(GATES)
 GATE_ALIASES = {"types": "tipos", "typecheck": "tipos", "tests": "testes", "unit": "testes", "unitarios": "testes",
                 "integracao": "testes", "end-to-end": "e2e", "coverage": "cobertura", "security": "seguranca",
-                "segurança": "seguranca", "a11y": "acessibilidade", "perf": "performance", "desempenho": "performance"}
+                "segurança": "seguranca", "a11y": "acessibilidade", "perf": "performance", "desempenho": "performance",
+                "ataque": "pentest", "red-team": "pentest", "reteste": "pentest", "intrusao": "pentest", "intrusão": "pentest"}
 GATE_STATUSES = ("pass", "fail", "warn", "skip", "running")
 GATE_STATUS_ALIASES = {"ok": "pass", "passou": "pass", "aprovado": "pass", "falhou": "fail", "erro": "fail",
                        "aviso": "warn", "atencao": "warn", "atenção": "warn", "pulado": "skip", "na": "skip",
@@ -133,6 +138,11 @@ SEVERITY_ALIASES = {"crítica": "critica", "critical": "critica", "high": "alta"
                     "low": "baixa"}
 FINDING_STATUSES = ("aberto", "corrigido", "aceito")
 FINDING_ALIASES = {"open": "aberto", "fixed": "corrigido", "resolvido": "corrigido", "accepted": "aceito"}
+FINDING_KINDS = {"bug": "Bug", "vulnerabilidade": "Vulnerabilidade", "qualidade": "Qualidade"}
+FINDING_KIND_ALIASES = {"vuln": "vulnerabilidade", "vulnerability": "vulnerabilidade", "seguranca": "vulnerabilidade",
+                        "segurança": "vulnerabilidade", "security": "vulnerabilidade", "quality": "qualidade",
+                        "manutencao": "qualidade", "manutenção": "qualidade", "defeito": "bug"}
+VULN_AGENTS = {"offensive-security-tester", "security-engineer", "security-hardening-engineer"}
 
 SENSITIVE = [
     re.compile(r"(?i)\b(api[_-]?key|client[_-]?secret|password|passwd|senha|secret|access[_-]?token|refresh[_-]?token)\s*[:=]\s*\S{6,}"),
@@ -267,6 +277,16 @@ def norm_severity(raw: str) -> str:
 
 def norm_finding_status(raw: str) -> str:
     return _norm(raw, FINDING_ALIASES, FINDING_STATUSES, "Status do achado")
+
+
+def norm_finding_kind(raw: str) -> str:
+    return _norm(raw, FINDING_KIND_ALIASES, FINDING_KINDS, "Tipo de achado")
+
+
+def default_finding_kind(agent: str) -> str:
+    if agent in VULN_AGENTS:
+        return "vulnerabilidade"
+    return "qualidade" if agent == "code-maintainability-reviewer" else "bug"
 
 
 def check_agent(raw: str) -> str:
@@ -471,13 +491,14 @@ def _apply_finding(run: dict[str, Any], ev: dict[str, Any]) -> None:
     if f is None:
         f = run["findings"][fid] = {"id": fid, "severity": ev.get("severity", "media"), "title": ev.get("title") or fid,
                                     "agent": norm_agent(ev.get("agent")) if ev.get("agent") else "coordinator",
-                                    "where": ev.get("where", ""), "status": "aberto", "note": "",
+                                    "where": ev.get("where", ""), "status": "aberto", "note": "", "cwe": "",
                                     "created": ev["ts"], "updated": ev["ts"]}
+        f["kind"] = ev.get("kind") or default_finding_kind(f["agent"])
         run["finding_order"].append(fid)
         new = True
     else:
         new = False
-    for k in ("severity", "title", "where", "note"):
+    for k in ("severity", "title", "where", "note", "cwe", "kind"):
         if ev.get(k):
             f[k] = ev[k]
     if ev.get("agent") and new:
@@ -486,7 +507,8 @@ def _apply_finding(run: dict[str, Any], ev: dict[str, Any]) -> None:
     f["status"] = ev.get("status") or f["status"]
     f["updated"] = ev["ts"]
     if new:
-        text = f"Achado {fid} ({SEVERITY_LABEL[f['severity']]}): {f['title']}" + (f" · {f['where']}" if f["where"] else "")
+        label = "Vulnerabilidade" if f["kind"] == "vulnerabilidade" else "Achado"
+        text = f"{label} {fid} ({SEVERITY_LABEL[f['severity']]}): {f['title']}" + (f" · {f['cwe']}" if f["cwe"] else "")             + (f" · {f['where']}" if f["where"] else "")
         _feed(run, ev, "finding", text, f["agent"], "failed" if f["severity"] in ("critica", "alta") else "blocked")
     elif previous != f["status"]:
         word = {"corrigido": "corrigido", "aceito": "aceito pelo operador", "aberto": "reaberto"}[f["status"]]
@@ -636,7 +658,8 @@ def _attention(run: dict[str, Any]) -> list[dict[str, str]]:
         f = run["findings"][fid]
         if f["status"] == "aberto" and f["severity"] in ("critica", "alta"):
             out.append({"kind": "finding", "id": fid, "status": "failed", "agent": f["agent"],
-                        "text": f"{SEVERITY_LABEL[f['severity']]}: {f['title']}"})
+                        "text": ("Vulnerabilidade " if f.get("kind") == "vulnerabilidade" else "")
+                        + f"{SEVERITY_LABEL[f['severity']]}: {f['title']}"})
     return out
 
 
@@ -675,6 +698,9 @@ def public_run(run: dict[str, Any], feed_limit: int = 160) -> dict[str, Any]:
         "findings": findings,
         "finding_counts": {**fcount, "fixed": sum(1 for f in findings if f["status"] == "corrigido"),
                            "accepted": sum(1 for f in findings if f["status"] == "aceito"),
+                           "vulns": sum(1 for f in findings if f.get("kind") == "vulnerabilidade"),
+                           "vulns_open": sum(1 for f in findings if f.get("kind") == "vulnerabilidade"
+                                             and f["status"] == "aberto"),
                            "total": len(findings)},
         "health": health(run),
         "attention": _attention(run),
@@ -787,9 +813,11 @@ def report_markdown(state: dict[str, Any]) -> str:
         for g in run["gates"]:
             lines.append(f"| {g['label']} | {gstatus[g['status']]} | {g['value']} | {g['note']} |")
     if run["findings"]:
-        lines += ["", "## Achados de revisão", "", "| ID | Severidade | Achado | Onde | Status |", "|---|---|---|---|---|"]
+        lines += ["", "## Achados de revisão e vulnerabilidades", "",
+                  "| ID | Tipo | Severidade | Achado | CWE | Onde | Status |", "|---|---|---|---|---|---|---|"]
         for f in run["findings"]:
-            lines.append(f"| {f['id']} | {SEVERITY_LABEL[f['severity']]} | {f['title']} | {f['where']} | {f['status']} |")
+            lines.append(f"| {f['id']} | {FINDING_KINDS.get(f.get('kind', 'bug'), '')} | {SEVERITY_LABEL[f['severity']]} | "
+                         f"{f['title']} | {f.get('cwe', '')} | {f['where']} | {f['status']} |")
     if run["decisions"]:
         lines += ["", "## Decisões (ADRs)", ""]
         lines += [f"- **{d['id']}** — {d['title']} ({name.get(d['agent'], d['agent'])})" for d in run["decisions"]]
@@ -1144,12 +1172,48 @@ DEMO_SCRIPT: list[tuple[int, dict[str, Any]]] = [
     (387, {"type": "finding", "finding": "F1", "status": "corrigido", "agent": "backend-engineer"}),
     (388, {"type": "finding", "finding": "F2", "status": "corrigido", "agent": "mobile-engineer"}),
     (390, {"type": "task", "task": "T15", "status": "done", "note": "1 achado alto, corrigido e coberto por teste"}),
-    (394, {"type": "stage", "stage": "entrega"}),
-    (396, {"type": "task", "task": "T18", "agent": "technical-writer", "status": "running",
+    (394, {"type": "stage", "stage": "seguranca", "note": "ataque autorizado em ambiente local"}),
+    (396, {"type": "task", "task": "T18", "agent": "offensive-security-tester", "status": "running",
+           "title": "Atacar API, painel web e app como um invasor"}),
+    (398, {"type": "task", "task": "T19", "agent": "security-hardening-engineer", "status": "queued",
+           "title": "Blindar as falhas encontradas", "after": ["T18"]}),
+    (416, {"type": "finding", "finding": "V1", "severity": "critica", "kind": "vulnerabilidade",
+           "agent": "offensive-security-tester", "cwe": "CWE-639",
+           "title": "IDOR: paciente lê consultas de outro paciente trocando o id", "where": "src/api/consultas/[id]/route.ts:12"}),
+    (424, {"type": "finding", "finding": "V2", "severity": "alta", "kind": "vulnerabilidade",
+           "agent": "offensive-security-tester", "cwe": "CWE-307",
+           "title": "Login por link mágico sem limite de tentativas", "where": "src/api/auth/link/route.ts:30"}),
+    (430, {"type": "finding", "finding": "V3", "severity": "media", "kind": "vulnerabilidade",
+           "agent": "offensive-security-tester", "cwe": "CWE-922",
+           "title": "Token salvo sem criptografia no app", "where": "apps/mobile/lib/auth.ts:18"}),
+    (434, {"type": "gate", "gate": "pentest", "status": "fail", "value": "3 explorações", "agent": "offensive-security-tester",
+           "note": "1 crítica, 1 alta, 1 média"}),
+    (436, {"type": "task", "task": "T18", "status": "done", "note": "3 falhas confirmadas com prova de conceito"}),
+    (437, {"type": "artifact", "name": "security/poc/idor-consultas.http", "kind": "teste", "agent": "offensive-security-tester",
+           "task": "T18"}),
+    (438, {"type": "task", "task": "T19", "status": "running"}),
+    (456, {"type": "finding", "finding": "V1", "status": "corrigido", "agent": "security-hardening-engineer",
+           "note": "autorização por dono do recurso + teste de regressão"}),
+    (462, {"type": "finding", "finding": "V2", "status": "corrigido", "agent": "security-hardening-engineer",
+           "note": "limite de 5 tentativas/15 min + alerta"}),
+    (468, {"type": "finding", "finding": "V3", "status": "corrigido", "agent": "security-hardening-engineer",
+           "note": "token no SecureStore (Keychain/Keystore)"}),
+    (470, {"type": "artifact", "name": "src/lib/security/autorizacao.ts", "kind": "codigo",
+           "agent": "security-hardening-engineer", "task": "T19"}),
+    (471, {"type": "artifact", "name": "tests/security/regressao.spec.ts", "kind": "teste",
+           "agent": "security-hardening-engineer", "task": "T19"}),
+    (472, {"type": "task", "task": "T19", "status": "done", "note": "3 proteções + 9 testes de regressão de segurança"}),
+    (474, {"type": "task", "task": "T20", "agent": "offensive-security-tester", "status": "running",
+           "title": "Reteste: tentar explorar de novo", "after": ["T19"]}),
+    (486, {"type": "task", "task": "T20", "status": "done", "note": "nenhuma das 3 falhas é mais explorável"}),
+    (487, {"type": "gate", "gate": "pentest", "status": "pass", "value": "0 exploráveis", "agent": "offensive-security-tester"}),
+    (490, {"type": "stage", "stage": "entrega"}),
+    (492, {"type": "task", "task": "T21", "agent": "technical-writer", "status": "running",
            "title": "README, guia de implantação e changelog"}),
-    (412, {"type": "task", "task": "T18", "status": "done"}),
-    (413, {"type": "artifact", "name": "README.md", "kind": "doc", "agent": "technical-writer", "task": "T18"}),
-    (418, {"type": "run.end", "status": "done", "summary": "Web + app mobile, 18 rotas, 146 testes passando, 2 ADRs"}),
+    (506, {"type": "task", "task": "T21", "status": "done"}),
+    (507, {"type": "artifact", "name": "README.md", "kind": "doc", "agent": "technical-writer", "task": "T21"}),
+    (512, {"type": "run.end", "status": "done",
+           "summary": "Web + app mobile, 155 testes passando, 3 vulnerabilidades exploradas e blindadas"}),
 ]
 
 
@@ -1283,11 +1347,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--note", default="")
     p.add_argument("--run")
 
-    p = sub.add_parser("finding", help="Registra ou atualiza um achado de revisão.")
+    p = sub.add_parser("finding", help="Registra ou atualiza um achado de revisão ou uma vulnerabilidade.")
     p.add_argument("finding_id", help="identificador curto, ex.: F1")
     p.add_argument("--severity", default="", help=", ".join(SEVERITIES))
     p.add_argument("--title", default="")
     p.add_argument("--where", default="", help="arquivo:linha")
+    p.add_argument("--kind", default="", help="bug | vulnerabilidade | qualidade (padrão pelo agente)")
+    p.add_argument("--cwe", default="", help="ex.: CWE-639")
     p.add_argument("--status", default="", help=", ".join(FINDING_STATUSES))
     p.add_argument("--agent", default="")
     p.add_argument("--note", default="")
@@ -1405,6 +1471,13 @@ def main(argv: list[str] | None = None) -> int:
                 ev["title"] = clean(args.title, 160)
             if args.where:
                 ev["where"] = short_path(args.where)
+            if args.kind:
+                ev["kind"] = norm_finding_kind(args.kind)
+            if args.cwe:
+                cwe = args.cwe.strip().upper()
+                if not re.fullmatch(r"(CWE-)?\d{1,5}", cwe):
+                    raise ValueError(f"CWE inválido: {args.cwe}. Use, por exemplo, CWE-639")
+                ev["cwe"] = cwe if cwe.startswith("CWE-") else "CWE-" + cwe
             if args.note:
                 ev["note"] = clean(args.note)
             append(ev)

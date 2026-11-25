@@ -30,8 +30,11 @@ Cada playbook lista as etapas na ordem. Registre no painel a etapa ao entrar nel
 **Revisão** (`code-correctness-reviewer`, `code-maintainability-reviewer`, em paralelo)
 14. Revisões independentes sobre o código completo. Corrija os achados críticos e altos; registre os demais.
 
+**Ataque e blindagem** (`offensive-security-tester`, depois `security-hardening-engineer`)
+15. Com o alvo autorizado (local ou de testes), o ataque explora o software como um invasor e prova cada vulnerabilidade; a blindagem corrige na causa raiz, adiciona proteções e testes de regressão de segurança; o ataque faz o reteste. Veja "Ataque e blindagem" no `SKILL.md`.
+
 **Entrega** (`technical-writer`)
-15. README com instalação, execução, configuração e arquitetura; CHANGELOG. Rode o app e mostre a evidência. Resposta final obrigatória.
+16. README com instalação, execução, configuração e arquitetura; CHANGELOG. Rode o app e mostre a evidência. Resposta final obrigatória.
 
 ## 2. Evoluir um produto existente
 
@@ -41,7 +44,8 @@ Cada playbook lista as etapas na ordem. Registre no painel a etapa ao entrar nel
 4. **Construção:** siga as convenções existentes; compatibilidade com dados e clientes já em uso; migrations reversíveis; feature flag só quando o lançamento exigir.
 5. **Qualidade:** testes da funcionalidade nova e de regressão do que já existia.
 6. **Revisão:** revisões independentes de corretude e manutenibilidade; segurança e performance conforme o risco.
-7. **Entrega:** documentação e changelog atualizados; resposta final.
+7. **Ataque e blindagem:** ataque focado na superfície que a funcionalidade criou ou mudou, blindagem e reteste.
+8. **Entrega:** documentação e changelog atualizados; resposta final.
 
 ## 3. Revisar
 
@@ -51,7 +55,8 @@ Cada playbook lista as etapas na ordem. Registre no painel a etapa ao entrar nel
 4. Rode o que for possível (build, testes, lint) para transformar suspeitas em evidência. Registre gates.
 5. Consolide sem duplicatas. Cada achado: severidade, arquivo:linha, cenário concreto, impacto e correção sugerida. Registre no painel com `finding`.
 6. Mostre primeiro o que é crítico/alto, depois o restante, o escopo verificado e o que não foi verificado.
-7. Não altere o código durante a revisão, salvo pedido explícito de correção.
+7. Em revisões de segurança, ou quando o operador autorizar, o `offensive-security-tester` tenta explorar os achados para separar o que é explorável do que é teórico.
+8. Não altere o código durante a revisão, salvo pedido explícito de correção.
 
 ## 4. Depurar
 
@@ -62,6 +67,7 @@ Cada playbook lista as etapas na ordem. Registre no painel a etapa ao entrar nel
 5. Corrija a causa raiz com a menor mudança, no código compartilhado. Guards só quando o estado tratado é legítimo.
 6. Escreva o teste de regressão que falhava antes e passa depois (`qa-test-engineer`).
 7. Revisão independente da correção; relate evidência antes/depois.
+8. Se o bug for de segurança (ou tocar autenticação, autorização, dados pessoais ou entradas externas), rode ataque, blindagem e reteste antes de entregar.
 
 ## Escolhendo especialistas por tipo de produto
 
@@ -74,4 +80,4 @@ Cada playbook lista as etapas na ordem. Registre no painel a etapa ao entrar nel
 | Recurso de IA/LLM | data-scientist, software-architect, backend-engineer, security-engineer |
 | Ferramenta interna/CLI | software-architect, backend-engineer, qa-test-engineer, technical-writer |
 
-Revisão independente (`code-correctness-reviewer` e `code-maintainability-reviewer`) entra em toda mudança de código que será entregue.
+Revisão independente (`code-correctness-reviewer` e `code-maintainability-reviewer`) entra em toda mudança de código que será entregue. Ataque e blindagem (`offensive-security-tester` e `security-hardening-engineer`) entram como fase final antes de toda entrega de software ou app.

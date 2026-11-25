@@ -82,7 +82,7 @@ nav.tabs button .tb.on{display:inline-block}
 .ring .rv b{display:block;font:700 24px var(--mono);line-height:1}
 .ring .rv small{display:block;font-size:11px;color:var(--muted);margin-top:3px}
 /* etapas */
-.steps{margin-top:14px;display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.steps{margin-top:14px;display:grid;grid-template-columns:repeat(9,1fr);gap:8px}
 .step{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 11px;min-height:64px}
 .step .n{font:600 11px var(--mono);color:var(--faint)}
 .step .l{font-size:12.5px;font-weight:600;margin-top:2px}
@@ -215,6 +215,9 @@ nav.tabs button .tb.on{display:inline-block}
 .sev-critica{background:rgba(239,68,68,.2);color:#fca5a5}.sev-alta{background:rgba(249,115,22,.18);color:#fdba74}
 .sev-media{background:rgba(234,179,8,.16);color:#fde047}.sev-baixa{background:rgba(100,116,139,.18);color:#cbd5e1}
 :root[data-theme="light"] .sev-critica{color:#b91c1c}:root[data-theme="light"] .sev-alta{color:#c2410c}:root[data-theme="light"] .sev-media{color:#a16207}:root[data-theme="light"] .sev-baixa{color:#475569}
+.fk{font:600 10.5px var(--mono);padding:1px 6px;border-radius:5px;border:1px solid var(--line2);color:var(--muted);margin-right:6px;white-space:nowrap}
+.fk-vulnerabilidade{border-color:color-mix(in srgb,#a855f7 55%,var(--line2));color:#c084fc;background:rgba(168,85,247,.12)}
+:root[data-theme="light"] .fk-vulnerabilidade{color:#7e22ce}
 .fst{font-size:11.5px;font-weight:600}
 .fst-aberto{color:var(--blocked)}.fst-corrigido{color:var(--done)}.fst-aceito{color:var(--muted)}
 tr.closed td{opacity:.6}
@@ -301,7 +304,7 @@ footer kbd{font-size:10.5px;padding:0 4px;border-bottom-width:1px}
 body.tv header nav.tabs,body.tv footer,body.tv .hide-tv{display:none!important}
 body.tv{font-size:15.5px}
 body.tv .wrap{max-width:none}
-@media (max-width:1280px){.grid,.agrid,.hgrid{grid-template-columns:1fr}.steps{grid-template-columns:repeat(4,1fr)}.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}.mission{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.qgrid{grid-template-columns:1fr}}
+@media (max-width:1280px){.grid,.agrid,.hgrid{grid-template-columns:1fr}.steps{grid-template-columns:repeat(5,1fr)}.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}.mission{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.qgrid{grid-template-columns:1fr}}
 @media (max-width:1600px){nav.tabs button kbd{display:none}.clock{display:none}}
 @media (max-width:1250px){.brand span{display:none}.iconbtn .lbl{display:none}}
 @media (max-width:1060px){.brand div{display:none}}
@@ -361,7 +364,7 @@ body.tv .wrap{max-width:none}
           <dt><kbd>1</kbd></dt><dd>Visão geral: missão, etapas, squads e atividade</dd>
           <dt><kbd>2</kbd></dt><dd>Tarefas em colunas, com dependências e filtro por squad</dd>
           <dt><kbd>3</kbd></dt><dd>Linha do tempo por especialista e por etapa</dd>
-          <dt><kbd>4</kbd></dt><dd>Qualidade: saúde, gates e achados de revisão</dd>
+          <dt><kbd>4</kbd></dt><dd>Qualidade: saúde, gates, achados e vulnerabilidades</dd>
           <dt><kbd>5</kbd></dt><dd>Entregáveis e decisões (ADRs)</dd>
           <dt><kbd>6</kbd></dt><dd>Histórico e métricas de produção</dd>
           <dt><kbd>/</kbd></dt><dd>Filtrar por texto</dd>
@@ -411,6 +414,7 @@ window.MASTERDEV_CONFIG = /*__MASTERDEV_CONFIG__*/null;
   const RUN_STATUS = { active: "Em andamento", done: "Concluída", failed: "Falhou", cancelled: "Cancelada" };
   const KIND_ICON = { codigo: "⌨", teste: "✔", doc: "📄", design: "🎨", infra: "⚙", dados: "🗄", config: "🔧" };
   const SEV = { critica: "Crítica", alta: "Alta", media: "Média", baixa: "Baixa" };
+  const FKIND = { bug: "bug", vulnerabilidade: "vulnerabilidade", qualidade: "qualidade" };
   const FEED_KINDS = { all: "Tudo", task: "Tarefas", quality: "Qualidade", decision: "Decisões" };
   const VIEWS = ["overview", "tasks", "timeline", "quality", "deliverables", "history"];
   const ui = {
@@ -701,16 +705,16 @@ window.MASTERDEV_CONFIG = /*__MASTERDEV_CONFIG__*/null;
         <div class="gv">${esc(g.value || "—")}</div>${g.note ? `<div class="gn">${esc(g.note)}</div>` : ""}${hist ? `<div class="hist">${hist}</div>` : ""}</div>`;
     }).join("");
     const fc = run.finding_counts;
-    const findings = run.findings.filter(f => inSquad(f.agent) && matches(f.title, f.where, f.id, meta(f.agent).name)).map(f =>
+    const findings = run.findings.filter(f => inSquad(f.agent) && matches(f.title, f.where, f.id, f.cwe, f.kind, meta(f.agent).name)).map(f =>
       `<tr class="${f.status !== "aberto" ? "closed" : ""}"><td style="font:12px var(--mono)">${esc(f.id)}</td><td><span class="sev sev-${f.severity}">${SEV[f.severity]}</span></td>
-       <td>${esc(f.title)}${f.note ? `<div style="font-size:12px;color:var(--muted)">${esc(f.note)}</div>` : ""}</td><td style="font:12px var(--mono);color:var(--muted)">${esc(f.where || "—")}</td>
+       <td><span class="fk fk-${esc(f.kind || "bug")}">${esc(FKIND[f.kind] || "bug")}</span>${esc(f.title)}${f.cwe ? ` <span class="dep">${esc(f.cwe)}</span>` : ""}${f.note ? `<div style="font-size:12px;color:var(--muted)">${esc(f.note)}</div>` : ""}</td><td style="font:12px var(--mono);color:var(--muted)">${esc(f.where || "—")}</td>
        <td><span style="display:inline-flex;gap:6px;align-items:center">${av(f.agent)}${esc(meta(f.agent).name)}</span></td><td><span class="fst fst-${f.status}">${esc(f.status)}</span></td></tr>`).join("");
     return `<div class="qgrid">
       <section class="card hcard"><div class="ring">${ring(h, 150, 12)}</div><div style="font-size:13px;color:var(--muted)">Índice de saúde da missão</div><ul>${reasons}</ul></section>
       <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
         <section class="card"><h2>Gates de qualidade <span class="cnt">${run.gates.length} registrados · só vale o que foi executado de verdade</span></h2><div class="gates">${gates}</div></section>
-        <section class="card"><h2>Achados de revisão <span class="cnt">${fc.total} no total · ${fc.fixed} corrigidos · ${fc.accepted} aceitos</span></h2>
-          <div class="sevs">${["critica", "alta", "media", "baixa"].map(s => `<span class="sev sev-${s}">${SEV[s]}: ${fc[s] || 0} aberto${fc[s] === 1 ? "" : "s"}</span>`).join("")}</div>
+        <section class="card"><h2>Achados de revisão e vulnerabilidades <span class="cnt">${fc.total} no total · ${fc.fixed} corrigidos · ${fc.accepted} aceitos</span></h2>
+          <div class="sevs">${["critica", "alta", "media", "baixa"].map(s => `<span class="sev sev-${s}">${SEV[s]}: ${fc[s] || 0} aberto${fc[s] === 1 ? "" : "s"}</span>`).join("")}<span class="fk fk-vulnerabilidade" style="padding:2px 8px">🛡 ${fc.vulns || 0} vulnerabilidade${fc.vulns === 1 ? "" : "s"} · ${fc.vulns_open || 0} aberta${fc.vulns_open === 1 ? "" : "s"}</span></div>
           ${findings ? `<div style="overflow:auto"><table><thead><tr><th>ID</th><th>Severidade</th><th>Achado</th><th>Onde</th><th>Quem</th><th>Status</th></tr></thead><tbody>${findings}</tbody></table></div>` : `<div class="empty-col">Nenhum achado registrado${ui.filter ? " para o filtro" : ""}.</div>`}
         </section>
       </div></div>`;

@@ -20,10 +20,10 @@ Ainda sem missão? Tecle **D** para ver uma demonstração (missão fictícia de
 
 | Tecla | Visão | O que mostra |
 |---|---|---|
-| `1` | **Visão geral** | Missão, plataformas e stack, progresso, indicadores, índice de saúde, 8 etapas, faixa "Precisa de atenção", equipe agrupada por squad e atividade ao vivo com filtro (tarefas, qualidade, decisões) |
+| `1` | **Visão geral** | Missão, plataformas e stack, progresso, indicadores, índice de saúde, 9 etapas, faixa "Precisa de atenção", equipe agrupada por squad e atividade ao vivo com filtro (tarefas, qualidade, decisões) |
 | `2` | **Tarefas** | Quadro em colunas (fila, em execução, em revisão, bloqueadas, concluídas) com dependências (`⏳ T4` aguardando, `✓ T4` concluída) e filtro por squad |
 | `3` | **Linha do tempo** | Faixa das etapas no topo e uma linha por especialista, agrupada por squad; listras = em execução |
-| `4` | **Qualidade** | Índice de saúde com os motivos, os 9 gates (build, lint, tipos, testes, ponta a ponta, cobertura, segurança, acessibilidade, performance) com histórico, e a tabela de achados por severidade e status |
+| `4` | **Qualidade** | Índice de saúde com os motivos, os 10 gates (build, lint, tipos, testes, ponta a ponta, cobertura, segurança, acessibilidade, performance e **pentest**) com histórico, e a tabela de achados e **vulnerabilidades** (tipo, severidade, CWE, local e status) |
 | `5` | **Entregáveis** | Arquivos e documentos produzidos, agrupados por tipo (código, teste, documentação, design, infraestrutura, dados, configuração), e as decisões de arquitetura (ADRs) |
 | `6` | **Histórico** | Métricas de produção (missões, taxa de sucesso, duração média, tarefas concluídas, entregáveis, achados corrigidos), missões por modo, especialistas mais acionados e a lista de missões com saúde |
 
@@ -65,7 +65,7 @@ Começa em 100 e cai com problemas reais: gate reprovado (−15) ou com avisos (
 | Master Data Engineer | Master Develops |
 |---|---|
 | 4 visões | 6 visões (+ Qualidade, + Entregáveis; Histórico com métricas) |
-| 8 agentes em grade única | 16 especialistas agrupados em 6 squads, com filtro por squad |
+| 8 agentes em grade única | 18 especialistas agrupados em 7 squads, com filtro por squad |
 | Tarefas soltas | Dependências entre tarefas (`--after`) com indicação de espera |
 | — | Gates de qualidade com histórico, achados de revisão com severidade/status, ADRs, entregáveis por tipo |
 | — | Índice de saúde 0–100 e faixa "Precisa de atenção" |
@@ -75,6 +75,7 @@ Começa em 100 e cai com problemas reais: gate reprovado (−15) ou com avisos (
 | Abas somem no celular | Abas roláveis no celular |
 | — | Content-Security-Policy no servidor; detecção de mais formatos de credencial (OpenAI/Anthropic, Slack, Google, connection strings) |
 | — | Hooks avançam a etapa conforme o papel do agente (nunca voltam) |
+| — | Etapa **Ataque e blindagem**, gate `pentest` e achados do tipo vulnerabilidade com CWE (v1.1.0) |
 
 ## Para quem integra: o protocolo
 

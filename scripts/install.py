@@ -1,7 +1,7 @@
 """Núcleo do instalador do Master Develops (chamado por install.sh e install.ps1).
 
 O que faz, nesta ordem:
-  1. instala a skill `masterdev` e os 16 agentes no Claude Code e no Codex;
+  1. instala a skill `masterdev` e os 18 agentes no Claude Code e no Codex;
   2. cria a pasta do aplicativo (padrão ~/MasterDevelops) com o painel de produção;
   3. no Claude Code, liga hooks que registram sozinhos o início e o fim de cada subagente;
   4. gera a ferramenta — o Painel de produção — e abre no navegador (http://127.0.0.1:47841).

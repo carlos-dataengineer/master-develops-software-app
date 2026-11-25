@@ -14,8 +14,8 @@ Obrigado pelo interesse! O Master Develops é uma equipe de agentes para **criar
 |---|---|
 | `masterdev/skills/masterdev/` | A skill coordenadora: `SKILL.md`, `references/` (playbooks, definição de pronto, protocolo do painel, memória), `scripts/` (`team_board.py`, `contextual_memory.py`) e `assets/` (`painel.html`, `team.json`). |
 | `masterdev/skills/masterdev/assets/team.json` | **Fonte única da equipe**: nome, sigla, cor, squad, descrição e instruções de cada agente. O painel lê este arquivo. |
-| `masterdev/agents/` | Os 16 agentes no formato do Claude Code (`.md`), **gerados** a partir do `team.json`. |
-| `masterdev/.codex/agents/` | Os mesmos 16 agentes no formato do Codex (`.toml`), **gerados** a partir do `team.json`. |
+| `masterdev/agents/` | Os 18 agentes no formato do Claude Code (`.md`), **gerados** a partir do `team.json`. |
+| `masterdev/.codex/agents/` | Os mesmos 18 agentes no formato do Codex (`.toml`), **gerados** a partir do `team.json`. |
 | `scripts/build_agents.py` | Gera os agentes a partir do `team.json` (`--check` só confere). |
 | `scripts/install.py` | Núcleo do instalador (chamado por `install.sh` e `install.ps1`). |
 | `scripts/screenshots.py` | Gera as capturas do README. |

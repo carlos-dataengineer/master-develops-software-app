@@ -2,6 +2,14 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## 1.1.0 — ataque e blindagem de segurança
+
+- **Novo squad Ataque & Blindagem** (equipe passa a ter 18 especialistas em 7 squads):
+  - `offensive-security-tester` (red team / hacker ético): ataca o software ou app criado pela equipe como um invasor, explora e prova cada vulnerabilidade com prova de conceito não destrutiva (OWASP Top 10, API Security, MASVS/MASTG, CWE) e faz o reteste — só no projeto e em ambiente local ou de testes autorizado;
+  - `security-hardening-engineer` (blue team): corrige a causa raiz, aplica defesa em profundidade, transforma cada prova de conceito em teste de regressão de segurança e adiciona prevenção contínua.
+- **Nova etapa final "Ataque e blindagem"**, entre a revisão independente e a entrega, em todos os playbooks e na definição de pronto.
+- Painel: 9 etapas, gate `pentest`, achados com tipo (`bug`, `vulnerabilidade`, `qualidade`) e CWE, contagem de vulnerabilidades abertas, relatório com tipo e CWE; a demonstração inclui ataque, blindagem e reteste.
+
 ## 1.0.0 — primeira versão pública
 
 - **Equipe de 16 especialistas** em 6 squads (Produto & Design, Arquitetura, Engenharia, Dados & IA, Plataforma & Qualidade, Revisão independente) + coordenador, para Claude Code (`/masterdev`) e Codex (`$masterdev`).

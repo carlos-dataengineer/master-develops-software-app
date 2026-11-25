@@ -14,7 +14,7 @@ Regras: textos curtos e sanitizados; nada de segredos, dados pessoais ou dados d
 | `task <id>` | Cria/atualiza tarefa de um agente | `task T3 --agent backend-engineer --status queued --title "API de agenda" --after T1,T2` |
 | `artifact <nome>` | Registra um entregável | `artifact src/api/agenda.ts --kind codigo --agent backend-engineer --task T3` |
 | `gate <nome>` | Resultado de uma verificação executada | `gate testes --status pass --value 134/134` |
-| `finding <id>` | Achado de revisão (novo ou atualização) | `finding F1 --severity alta --agent code-correctness-reviewer --title "..." --where src/x.ts:41` |
+| `finding <id>` | Achado de revisão ou vulnerabilidade (novo ou atualização) | `finding V1 --severity critica --kind vulnerabilidade --cwe CWE-639 --agent offensive-security-tester --title "IDOR em consultas" --where src/api/x.ts:12` |
 | `decision <id>` | Decisão de arquitetura (ADR) | `decision ADR-1 --title "Monólito modular"` |
 | `note "<texto>"` | Aviso ou pergunta ao operador no feed | `note "Aguardando credenciais do ambiente de testes"` |
 | `finish` | Encerra (`--status done|failed|cancelled`, `--summary`) | `finish --summary "Web + app entregues"` |
@@ -27,12 +27,12 @@ Regras: textos curtos e sanitizados; nada de segredos, dados pessoais ou dados d
 ## Valores aceitos
 
 - **Modos:** `construir`, `evoluir`, `revisar`, `depurar` (no Claude Code, missões abertas só pelos hooks aparecem como "Sessão livre").
-- **Etapas:** `descoberta`, `arquitetura`, `plano`, `construcao`, `qualidade`, `revisao`, `entrega`. Pular etapas é normal: as que não aconteceram aparecem como "não se aplicou".
+- **Etapas:** `descoberta`, `arquitetura`, `plano`, `construcao`, `qualidade`, `revisao`, `seguranca` (ataque e blindagem), `entrega`. Pular etapas é normal: as que não aconteceram aparecem como "não se aplicou".
 - **Status de tarefa:** `queued`, `running`, `review`, `done`, `blocked`, `failed`.
-- **Agentes:** os 16 de `assets/team.json` (com hífen ou sublinhado) ou `coordinator`.
+- **Agentes:** os 18 de `assets/team.json` (com hífen ou sublinhado) ou `coordinator`.
 - **Entregáveis (`--kind`):** `codigo`, `teste`, `doc`, `design`, `infra`, `dados`, `config`.
-- **Gates:** `build`, `lint`, `tipos`, `testes`, `e2e`, `cobertura`, `seguranca`, `acessibilidade`, `performance` (outros nomes curtos também são aceitos). Status: `pass`, `fail`, `warn`, `skip`, `running`. Registre só o que foi realmente executado.
-- **Achados:** severidade `critica`, `alta`, `media`, `baixa`; status `aberto`, `corrigido`, `aceito`.
+- **Gates:** `build`, `lint`, `tipos`, `testes`, `e2e`, `cobertura`, `seguranca`, `acessibilidade`, `performance`, `pentest` (resultado do ataque e do reteste) (outros nomes curtos também são aceitos). Status: `pass`, `fail`, `warn`, `skip`, `running`. Registre só o que foi realmente executado.
+- **Achados:** severidade `critica`, `alta`, `media`, `baixa`; status `aberto`, `corrigido`, `aceito`; tipo (`--kind`) `bug`, `vulnerabilidade` ou `qualidade` (padrão: vulnerabilidade para os agentes de segurança, qualidade para o revisor de manutenibilidade, bug para os demais); `--cwe CWE-639` opcional.
 
 ## Índice de saúde
 
@@ -40,4 +40,4 @@ Começa em 100 e desconta: gate reprovado −15, gate com avisos −5, achado ab
 
 ## Hooks do Claude Code
 
-Com o instalador, os eventos `PreToolUse` e `PostToolUse` da ferramenta de subagentes chamam `masterdev_board.py hook --app masterdev`. O hook liga o subagente à tarefa que o coordenador anunciou para o mesmo agente (ou cria uma), avança a etapa conforme o papel (engenharia → construção, QA/performance → qualidade, revisores → revisão; nunca volta) e nunca interrompe o agente se algo der errado.
+Com o instalador, os eventos `PreToolUse` e `PostToolUse` da ferramenta de subagentes chamam `masterdev_board.py hook --app masterdev`. O hook liga o subagente à tarefa que o coordenador anunciou para o mesmo agente (ou cria uma), avança a etapa conforme o papel (engenharia → construção, QA/performance → qualidade, revisores → revisão, ataque/blindagem → ataque e blindagem; nunca volta) e nunca interrompe o agente se algo der errado.
