@@ -1,0 +1,39 @@
+name: Relatar um problema
+description: Algo não funcionou na instalação, na skill, nos agentes ou no painel.
+labels: [bug]
+body:
+  - type: dropdown
+    id: host
+    attributes:
+      label: Onde aconteceu
+      options: [Claude Code, Codex, Painel de produção, Instalador, Memória contextual]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão
+      description: Conteúdo de ~/MasterDevelops/VERSION
+      placeholder: 1.0.0
+  - type: input
+    id: os
+    attributes:
+      label: Sistema operacional e versão do Python
+      placeholder: Windows 11, Python 3.12
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu e o que você esperava
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      placeholder: 1. ... 2. ...
+  - type: textarea
+    id: logs
+    attributes:
+      label: Mensagens de erro
+      description: Remova segredos, dados de clientes e caminhos pessoais antes de colar.
+      render: text

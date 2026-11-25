@@ -1,0 +1,6 @@
+interface:
+  display_name: "Master Develops"
+  short_description: "Equipe completa de desenvolvimento de software e apps: construir, evoluir, revisar e depurar, com painel de produção em tempo real"
+  default_prompt: "Use $masterdev para acionar a equipe de desenvolvimento de software e aplicativos."
+policy:
+  allow_implicit_invocation: false

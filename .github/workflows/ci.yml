@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Testes (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Agentes em dia com team.json
+        run: python scripts/build_agents.py --check
+      - name: Validar pacote
+        run: python masterdev/tests/validate_package.py
+      - name: Testes do pacote (painel e memória)
+        run: python -m unittest discover -s masterdev/tests -p "test_*.py" -v
+      - name: Testes do instalador
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Sintaxe do install.sh
+        if: runner.os != 'Windows'
+        run: bash -n install.sh
+
+  powershell:
+    name: Sintaxe do install.ps1
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("$PWD/install.ps1", [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }

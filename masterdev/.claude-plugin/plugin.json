@@ -1,0 +1,12 @@
+{
+  "name": "masterdev",
+  "version": "1.0.0",
+  "description": "Equipe completa de desenvolvimento de software e aplicativos (16 especialistas): construir, evoluir, revisar e depurar, com painel de produção em tempo real.",
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "author": {
+    "name": "carlos-dataengineer"
+  },
+  "homepage": "https://github.com/carlos-dataengineer/master-develops-software-app",
+  "license": "MIT"
+}

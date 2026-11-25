@@ -1,0 +1,17 @@
+{
+  "name": "master-develops",
+  "owner": { "name": "carlos-dataengineer" },
+  "metadata": {
+    "description": "Equipe de agentes de IA para criar softwares e aplicativos sofisticados, com painel de produção em tempo real."
+  },
+  "plugins": [
+    {
+      "name": "masterdev",
+      "source": "./masterdev",
+      "description": "Coordenador + 16 especialistas (produto, design, arquitetura, web, mobile, backend, banco, dados, IA, DevOps, segurança, QA, performance, docs e revisão).",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": ["software-engineering", "mobile", "web", "agents", "claude-code", "codex"]
+    }
+  ]
+}

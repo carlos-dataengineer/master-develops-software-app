@@ -1,0 +1,19 @@
+name: Sugerir uma melhoria
+description: Ideia para a equipe, os agentes, os playbooks ou o painel.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Que problema de desenvolvimento de software ou apps isso resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options: [Skill coordenadora, Agentes, Playbooks, Painel de produção, Memória contextual, Instalador, Documentação]
